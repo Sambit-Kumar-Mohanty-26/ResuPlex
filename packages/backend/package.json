@@ -3,17 +3,18 @@
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
-
   "scripts": {
-      "build": "tsc",
-      "start": "node dist/index.js",
-      "dev": "nodemon src/index.ts"
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "dotenv -e ../../.env -- nodemon --exec node --loader ts-node/esm src/index.ts",
+    "prisma": "dotenv -e ../../.env -- prisma"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "module", 
+  "type": "module",
   "dependencies": {
+    "@prisma/client": "^6.16.2",
     "cors": "^2.8.5",
     "dotenv": "^17.2.2",
     "express": "^5.1.0"
@@ -22,7 +23,9 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/node": "^24.5.2",
+    "dotenv-cli": "^10.0.0",
     "nodemon": "^3.1.10",
+    "prisma": "^6.16.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.2"
   }
