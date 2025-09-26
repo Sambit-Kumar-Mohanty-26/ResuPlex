@@ -164,3 +164,6 @@ yarn-error.log*
 
 # Misc
 .DS_Store
+
+# Prisma
+/packages/backend/prisma/ERD.pdf 
