@@ -3,6 +3,7 @@ import type { Request, Response } from 'express';
 import { prisma } from '../db/index.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { signToken } from '../utils/jwt.js';
 
 const router = Router();
 
@@ -67,11 +68,7 @@ router.post('/login', async (req: Request, res: Response) => {
       return res.status(401).json({ error: 'Invalid credentials.' });
     }
 
-    const token = jwt.sign(
-      { userId: user.id }, 
-      process.env.JWT_SECRET as string,
-      { expiresIn: '1d' }
-    );
+    const token = signToken({ userId: user.id });
       
     const { password: _, ...userWithoutPassword } = user;
     

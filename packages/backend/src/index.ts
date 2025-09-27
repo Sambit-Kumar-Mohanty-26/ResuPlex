@@ -1,8 +1,9 @@
 import express from 'express';
 import type { Express, Request, Response } from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv'; 
+import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
+import userRoutes from './routes/user.js'; 
 
 dotenv.config();
 
@@ -17,6 +18,8 @@ app.get('/api/health', (req: Request, res: Response) => {
 });
 
 app.use('/api/auth', authRoutes);
+
+app.use('/api/users', userRoutes);
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
