@@ -1,3 +1,5 @@
+const plugin = require('tailwindcss/plugin'); 
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
@@ -7,5 +9,13 @@ export default {
   theme: {
     extend: {},
   },
-  plugins: [],
+  plugins: [
+    plugin(function({ addUtilities }) {
+      addUtilities({
+        '.transform-style-3d': {
+          'transform-style': 'preserve-3d',
+        },
+      })
+    })
+  ],
 }
