@@ -5,6 +5,7 @@ import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import MainLayout from './layouts/MainLayout';
+import DashboardLayout from './layouts/DashboardLayout'; 
 
 function App() {
   return (
@@ -21,7 +22,11 @@ function App() {
       </Route>
 
       <Route element={<ProtectedRoute />}>
-        <Route path="/dashboard" element={<DashboardPage />} />
+         <Route element={<DashboardLayout />}>
+          <Route path="/dashboard" element={<DashboardPage />} />
+          {/* We can add a placeholder settings page */}
+          <Route path="/settings" element={<div><h1>Settings Page</h1></div>} />
+        </Route>
       </Route>
     </Routes>
   );

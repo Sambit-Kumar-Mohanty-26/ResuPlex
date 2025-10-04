@@ -1,9 +1,11 @@
+// src/components/Logo.tsx
+
 import { Link } from 'react-router-dom';
 
 interface LogoProps {
   className?: string;
-  variant?: 'light' | 'dark'; 
-  useGradient?: boolean;    
+  variant?: 'light' | 'dark';
+  useGradient?: boolean;
 }
 
 const Logo = ({ className = '', variant = 'light', useGradient = false }: LogoProps) => {
@@ -13,9 +15,10 @@ const Logo = ({ className = '', variant = 'light', useGradient = false }: LogoPr
   return (
     <Link to="/" className={`flex items-center space-x-2 ${className}`}>
       <img 
-        src="/images/logo.png"
+        // === THE ONLY CHANGE IS ON THIS LINE ===
+        src="/images/ResuPlex-logo.png" // <-- Change this to the name of your new logo file
         alt="ResuPlex Logo"
-        className={`h-8 w-auto ${variant === 'dark' ? 'brightness-200' : ''}`} 
+        className={`h-8 w-auto ${variant === 'dark' ? 'brightness-200' : ''}`}
       />
       {useGradient ? (
         <span className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-300">

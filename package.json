@@ -1,0 +1,29 @@
+{
+  "name": "resuplex",
+  "version": "1.0.0",
+  "description": "AI-Powered Resume Builder to help users craft the perfect resume.",
+  "main": "index.js",
+"scripts": {
+    "start": "npm run db:start && wait-on tcp:5432 && npm run db:migrate && npm run dev",
+    "dev": "concurrently \"npm:backend:dev\" \"npm:frontend:dev\"",
+    "db:start": "docker-compose up -d",
+    "db:migrate": "npm run prisma --prefix packages/backend -- migrate dev --name init",
+    "backend:dev": "npm run dev --prefix packages/backend",
+    "frontend:dev": "npm run dev --prefix packages/frontend"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sambit-Kumar-Mohanty-26/ResuPlex.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Sambit-Kumar-Mohanty-26/ResuPlex/issues"
+  },
+  "homepage": "https://github.com/Sambit-Kumar-Mohanty-26/ResuPlex#readme",
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "wait-on": "^9.0.1"
+  }
+}
