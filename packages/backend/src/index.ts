@@ -3,6 +3,7 @@ import type { Express, Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import morgan from 'morgan';
+import { Pool } from 'pg';
 import { prisma } from './db/index.js';
 import authRoutes from './routes/auth.js';
 import userRoutes from './routes/user.js';
@@ -11,6 +12,17 @@ dotenv.config();
 
 const app: Express = express();
 const port = process.env.PORT || 8000;
+
+console.log("===================================");
+console.log("SERVER STARTING UP...");
+console.log("DATABASE_URL Value Check:");
+if (process.env.DATABASE_URL) {
+    const urlParts = process.env.DATABASE_URL.split('@');
+    console.log(`URL seems to be set. Host: @${urlParts[1]}`);
+} else {
+    console.error("CRITICAL FAILURE: process.env.DATABASE_URL IS NOT SET!");
+}
+console.log("===================================");
 
 const allowedOrigins = [
   'http://localhost:5173',
@@ -37,6 +49,36 @@ app.use(express.json());
 
 app.get('/api/health', (req: Request, res: Response) => {
   res.status(200).json({ status: 'UP', message: 'ResuPlex API is running!' });
+});
+
+app.get('/api/db-test', async (req: Request, res: Response) => {
+  console.log('Received request for /api/db-test');
+  const connectionString = process.env.DATABASE_URL;
+
+  if (!connectionString) {
+    return res.status(500).json({ error: 'DATABASE_URL environment variable is not set on the server.' });
+  }
+
+  const pool = new Pool({ connectionString });
+  let client;
+
+  try {
+    console.log('Attempting direct connection to database...');
+    client = await pool.connect();
+    console.log('SUCCESS: Direct connection to database established!');
+    await client.query('SELECT NOW()'); 
+    console.log('SUCCESS: Test query executed.');
+    res.status(200).json({ message: 'Database connection test was successful.' });
+  } catch (error) {
+    console.error('FAIL: Database connection test failed.', error);
+    res.status(500).json({
+      error: 'Failed to connect to the database directly.',
+      details: (error as Error).message,
+    });
+  } finally {
+    if (client) client.release();
+    await pool.end();
+  }
 });
 
 app.use('/api/auth', authRoutes);
