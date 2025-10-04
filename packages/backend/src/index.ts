@@ -1,8 +1,6 @@
-// packages/backend/src/index.ts
-
 import express from 'express';
-import type { Express, Request, Response, NextFunction } from 'express'; // <-- Import NextFunction
-import cors from 'cors'; // We still need this for some things, but will override
+import type { Express, Request, Response, NextFunction } from 'express';
+import cors from 'cors';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
 import userRoutes from './routes/user.js';
@@ -12,31 +10,29 @@ dotenv.config();
 const app: Express = express();
 const port = process.env.PORT || 8000;
 
-// =================================================================
-// BULLETPROOF CUSTOM CORS MIDDLEWARE
-// =================================================================
-const allowCrossDomain = (req: Request, res: Response, next: NextFunction) => {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:5173');
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+const allowedOrigins = [
+  'http://localhost:5173',       
+  'https://resu-plex.vercel.app'
+];
 
-  // Intercept OPTIONS method (the preflight request)
-  if ('OPTIONS' == req.method) {
-    res.sendStatus(204);
-  } else {
-    next();
-  }
+const corsOptions = {
+  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  credentials: true,
+  optionsSuccessStatus: 204
 };
 
-app.use(allowCrossDomain);
-// =================================================================
+app.use(cors(corsOptions));
 
-// We can remove the complex cors() call now, but let's keep express.json()
 app.use(express.json());
 
-
-// --- API ROUTES ---
-// The rest of your file is unchanged.
 app.get('/api/health', (req: Request, res: Response) => {
   res.status(200).json({ status: 'UP', message: 'ResuPlex API is running!' });
 });
