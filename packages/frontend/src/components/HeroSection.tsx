@@ -1,10 +1,7 @@
-// src/components/HeroSection.tsx
-
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import TextScramble from './TextScramble'; // Ensure this component exists
+import TextScramble from './TextScramble'; 
 
-// Data for the social proof logos
 const companyLogos = [
   { src: '/images/logos/google.svg', alt: 'Google' },
   { src: '/images/logos/microsoft.svg', alt: 'Microsoft' },
@@ -19,7 +16,6 @@ const HeroSection = () => {
       <div className="container mx-auto px-6 py-24 sm:py-32 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           
-          {/* Left Column: Text Content */}
           <motion.div
             className="text-center lg:text-left"
             initial={{ opacity: 0, x: -50 }}
@@ -52,12 +48,11 @@ const HeroSection = () => {
               </Link>
             </div>
 
-            {/* Social Proof Logo Section */}
             <motion.div
               className="mt-16 text-center lg:text-left"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.5 }} // Fades in after main content
+              transition={{ duration: 0.5, delay: 0.5 }} 
             >
               <p className="text-sm font-semibold text-gray-500 tracking-wider uppercase">
                 Trusted by professionals at top companies
@@ -75,7 +70,6 @@ const HeroSection = () => {
             </motion.div>
           </motion.div>
 
-          {/* Right Column: Image */}
           <motion.div
             className="flex justify-center"
             initial={{ opacity: 0, scale: 0.8 }}
