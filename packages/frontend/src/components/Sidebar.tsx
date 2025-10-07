@@ -1,6 +1,3 @@
-// src/components/Sidebar.tsx
-
-import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -17,71 +14,89 @@ const navItems = [
 ];
 
 const Sidebar = () => {
-  const [hoveredItem, setHoveredItem] = useState('');
   const user = useAuthStore((state) => state.user);
   const logoutAction = useAuthStore((state) => state.logout);
   const navigate = useNavigate();
 
   const handleLogout = () => {
     logoutAction();
-    navigate('/login');
+    navigate('/login'); 
+  };
+
+  const sidebarVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, x: -20 },
+    visible: { opacity: 1, x: 0 },
   };
 
   return (
     <motion.aside
-      className="hidden md:flex flex-col w-64 bg-white/5 backdrop-blur-xl border-r border-white/10"
-      initial={{ x: -256 }}
-      animate={{ x: 0 }}
-      transition={{ duration: 0.5, ease: "easeInOut" }}
+      className="hidden md:flex flex-col w-24 bg-black/10 backdrop-blur-2xl border-r border-white/10"
+      initial={{ x: -96, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      transition={{ duration: 0.5, ease: "easeInOut" }}  // A more refined ease
     >
-      <div className="p-6 border-b border-white/10">
-        <Logo variant="dark" />
-      </div>
+      <motion.div
+        className="flex flex-col h-full p-4"
+        variants={sidebarVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <motion.div variants={itemVariants} className="w-full mb-8">
+          <Logo variant="dark" />
+        </motion.div>
 
-      <nav className="flex-1 p-4 relative">
-        {navItems.map((item) => (
-          <NavLink
-            key={item.name}
-            to={item.href}
-            onMouseEnter={() => setHoveredItem(item.name)}
-            onMouseLeave={() => setHoveredItem('')}
-            className="relative flex items-center px-4 py-3 my-2 text-gray-300 rounded-lg hover:text-white transition-colors"
-          >
-            {/* Animated Pill Background */}
-            {hoveredItem === item.name && (
-              <motion.div
-                layoutId="activePill"
-                className="absolute inset-0 bg-white/10 rounded-lg"
-                transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              />
-            )}
+        <nav className="flex flex-col items-center space-y-4">
+          {navItems.map((item) => (
+            <motion.div key={item.name} variants={itemVariants}>
+              <NavLink
+                to={item.href}
+                className={({ isActive }) =>
+                  `group relative flex items-center justify-center h-14 w-14 rounded-2xl text-gray-300 
+                   transition-all duration-300
+                   ${isActive ? 'bg-indigo-500 text-white' : 'hover:bg-white/10 hover:text-white'}`
+                }
+              >
+                <item.icon className="h-7 w-7 transform group-hover:scale-110 transition-transform" />
 
-            {/* Icon and Text */}
-            <item.icon className="h-6 w-6 mr-4 relative z-10" />
-            <span className="relative z-10 font-semibold">{item.name}</span>
-          </NavLink>
-        ))}
-      </nav>
+                <div className="absolute left-full ml-4 px-3 py-1.5 whitespace-nowrap bg-gray-800 text-white text-sm font-semibold 
+                                rounded-md shadow-lg opacity-0 scale-90 group-hover:opacity-100 group-hover:scale-100 
+                                transition-all duration-200 origin-left pointer-events-none">
+                  {item.name}
+                </div>
+              </NavLink>
+            </motion.div>
+          ))}
+        </nav>
 
-      {/* User Profile / Logout */}
-      <div className="p-6 mt-auto border-t border-white/10">
-        <div className="flex items-center">
-          <div className="h-10 w-10 rounded-full bg-indigo-500 flex items-center justify-center font-bold text-white">
-            {user?.name ? user.name.charAt(0).toUpperCase() : user?.email.charAt(0).toUpperCase()}
+        <motion.div variants={itemVariants} className="mt-auto group relative flex justify-center">
+          <div className="h-12 w-12 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center font-bold text-white text-lg cursor-pointer">
+            {user?.name ? user.name.charAt(0).toUpperCase() : user?.email?.charAt(0).toUpperCase()}
           </div>
-          <div className="ml-3">
+          <div className="absolute left-full bottom-0 ml-4 p-4 whitespace-nowrap bg-gray-800/80 backdrop-blur-md 
+                          rounded-lg shadow-lg opacity-0 scale-90 group-hover:opacity-100 group-hover:scale-100 
+                          transition-all duration-200 origin-left pointer-events-none">
             <p className="text-sm font-semibold text-white">{user?.name || 'User'}</p>
-            <p className="text-xs text-gray-400">{user?.email}</p>
+            <button
+              onClick={handleLogout}
+              className="w-full mt-2 flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-300 rounded-lg hover:bg-white/10 hover:text-white transition-colors"
+            >
+              <ArrowLeftOnRectangleIcon className="h-5 w-5 mr-2" />
+              Logout
+            </button>
           </div>
-        </div>
-        <button
-          onClick={handleLogout}
-          className="w-full mt-4 flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-300 rounded-lg hover:bg-white/10 hover:text-white transition-colors"
-        >
-          <ArrowLeftOnRectangleIcon className="h-5 w-5 mr-2" />
-          Logout
-        </button>
-      </div>
+        </motion.div>
+      </motion.div>
     </motion.aside>
   );
 };

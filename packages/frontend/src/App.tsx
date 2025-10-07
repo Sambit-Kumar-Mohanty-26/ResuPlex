@@ -3,6 +3,7 @@ import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
+import EditorPage from './pages/EditorPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import MainLayout from './layouts/MainLayout';
 import DashboardLayout from './layouts/DashboardLayout'; 
@@ -24,8 +25,8 @@ function App() {
       <Route element={<ProtectedRoute />}>
          <Route element={<DashboardLayout />}>
           <Route path="/dashboard" element={<DashboardPage />} />
-          {/* We can add a placeholder settings page */}
           <Route path="/settings" element={<div><h1>Settings Page</h1></div>} />
+           <Route path="/editor/:resumeId" element={<EditorPage />} />
         </Route>
       </Route>
     </Routes>
