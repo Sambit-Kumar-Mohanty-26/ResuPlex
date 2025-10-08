@@ -1,35 +1,80 @@
-const ModernTemplate = () => {
+import type{ ResumeState } from '../../../types/resume'; 
+
+interface TemplateProps {
+  data: ResumeState;
+}
+
+const ModernTemplate = ({ data }: TemplateProps) => {
   return (
-    <div className="p-8 text-black bg-white">
+    <div className="p-8 text-sm text-gray-800 bg-white min-h-full">
       <div className="text-center border-b-2 pb-4 border-gray-300">
-        <h1 className="text-4xl font-bold text-gray-800">SAMBIT KUMAR MOHANTY</h1>
-        <p className="text-gray-600 mt-2">
-          sambit@example.com | (123) 456-7890 | linkedin.com/in/sambit
+        <h1 className="text-4xl font-bold text-gray-900 tracking-tight">{data.contact.name || 'Your Name'}</h1>
+        <p className="text-gray-600 mt-2 text-xs">
+          {data.contact.email}
+          {data.contact.phone && ` | ${data.contact.phone}`}
+          {data.contact.linkedin && ` | ${data.contact.linkedin}`}
+          {data.contact.website && ` | ${data.contact.website}`}
         </p>
       </div>
-
-      <div className="mt-6">
-        <h2 className="text-xl font-bold text-indigo-600 border-b border-indigo-200 pb-1">
-          PROFESSIONAL SUMMARY
-        </h2>
-        <p className="mt-2 text-gray-700 text-sm">
-          A highly motivated and results-oriented Software Engineer...
-        </p>
-      </div>
-
-      <div className="mt-6">
-        <h2 className="text-xl font-bold text-indigo-600 border-b border-indigo-200 pb-1">
-          WORK EXPERIENCE
-        </h2>
-        <div className="mt-2">
-          <h3 className="text-lg font-semibold text-gray-800">Software Engineer</h3>
-          <p className="text-gray-600 text-sm">Tech Company Inc. | Jan 2025 - Present</p>
-          <ul className="list-disc list-inside mt-2 text-gray-700 text-sm space-y-1">
-            <li>Developed and maintained web applications using React and Node.js.</li>
-            <li>Collaborated with cross-functional teams to deliver high-quality software.</li>
-          </ul>
+      {data.summary && (
+        <div className="mt-6">
+          <h2 className="text-base font-bold text-indigo-600 tracking-widest uppercase border-b-2 border-indigo-200 pb-1">
+            Professional Summary
+          </h2>
+          <p className="mt-2 text-gray-700 whitespace-pre-wrap">{data.summary}</p>
         </div>
-      </div>
+      )}
+      {data.experience.length > 0 && (
+        <div className="mt-6">
+          <h2 className="text-base font-bold text-indigo-600 tracking-widest uppercase border-b-2 border-indigo-200 pb-1">
+            Work Experience
+          </h2>
+          {data.experience.map((exp) => (
+            <div key={exp.id} className="mt-4">
+              <div className="flex justify-between items-baseline">
+                <h3 className="text-md font-semibold text-gray-900">{exp.jobTitle || 'Job Title'}</h3>
+                <p className="text-gray-600 text-xs">{exp.startDate} - {exp.endDate}</p>
+              </div>
+              <p className="text-gray-700 text-sm font-medium">{exp.company || 'Company Name'}{exp.location && `, ${exp.location}`}</p>
+              <ul className="list-disc list-inside mt-2 text-gray-700 space-y-1">
+                {exp.description.map((point, i) => (
+                  <li key={i}>{point}</li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      )}
+      {data.education.length > 0 && (
+        <div className="mt-6">
+          <h2 className="text-base font-bold text-indigo-600 tracking-widest uppercase border-b-2 border-indigo-200 pb-1">
+            Education
+          </h2>
+          {data.education.map((edu) => (
+            <div key={edu.id} className="mt-4">
+               <div className="flex justify-between items-baseline">
+                <h3 className="text-md font-semibold text-gray-900">{edu.degree || 'Degree or Certificate'}</h3>
+                <p className="text-gray-600 text-xs">{edu.graduationDate}</p>
+              </div>
+              <p className="text-gray-700 text-sm font-medium">{edu.institution || 'Institution Name'}{edu.location && `, ${edu.location}`}</p>
+            </div>
+          ))}
+        </div>
+      )}
+      {data.skills.length > 0 && (
+        <div className="mt-6">
+          <h2 className="text-base font-bold text-indigo-600 tracking-widest uppercase border-b-2 border-indigo-200 pb-1">
+            Skills
+          </h2>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {data.skills.map((skill) => (
+              <span key={skill.id} className="bg-gray-200 text-gray-800 text-xs font-semibold px-2.5 py-1 rounded-full">
+                {skill.name}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
