@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
 import { EllipsisVerticalIcon, PencilIcon, DocumentDuplicateIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 export interface Resume {
   id: string;
@@ -12,6 +13,8 @@ export interface Resume {
 
 interface ResumeCardProps {
   resume: Resume;
+  onDelete: (id: string) => void;
+  onDuplicate: (id: string) => void;
 }
 
 const cardVariants: Variants = {
@@ -19,7 +22,7 @@ const cardVariants: Variants = {
   visible: { opacity: 1, y: 0, scale: 1 },
 };
 
-const ResumeCard = ({ resume }: ResumeCardProps) => {
+const ResumeCard = ({ resume, onDelete, onDuplicate }: ResumeCardProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
@@ -36,10 +39,16 @@ const ResumeCard = ({ resume }: ResumeCardProps) => {
         />
       </div>
 
-      <div className="absolute top-4 right-4 z-20">
+      <div 
+        className="absolute top-4 right-4 z-20"
+        onBlur={(e) => {
+          if (!e.currentTarget.contains(e.relatedTarget)) {
+            setIsMenuOpen(false);
+          }
+        }}
+      >
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
-          onBlur={() => setIsMenuOpen(false)}
           className="p-2 bg-black/30 rounded-full text-white hover:bg-black/50 transition-colors"
         >
           <EllipsisVerticalIcon className="h-6 w-6" />
@@ -51,20 +60,32 @@ const ResumeCard = ({ resume }: ResumeCardProps) => {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <a href="#" className="flex items-center px-4 py-2 text-sm text-gray-200 hover:bg-white/10">
+            <Link to={`/editor/${resume.id}`} className="flex items-center w-full px-4 py-2 text-sm text-gray-200 text-left hover:bg-white/10">
               <PencilIcon className="h-5 w-5 mr-3" /> Edit
-            </a>
-            <a href="#" className="flex items-center px-4 py-2 text-sm text-gray-200 hover:bg-white/10">
-              <DocumentDuplicateIcon className="h-5 w-5 mr-3" /> Duplicate
-            </a>
-            <a href="#" className="flex items-center px-4 py-2 text-sm text-red-400 hover:bg-red-500 hover:text-white">
+            </Link>
+
+            <button
+              onClick={() => {
+                onDelete(resume.id);
+                setIsMenuOpen(false); 
+              }}
+              className="w-full flex items-center px-4 py-2 text-sm text-red-400 text-left hover:bg-red-500 hover:text-white"
+            >
               <TrashIcon className="h-5 w-5 mr-3" /> Delete
-            </a>
+            </button>
+            <button
+              onClick={() => {
+                onDuplicate(resume.id);
+                setIsMenuOpen(false);
+              }}
+                className="flex items-center w-full px-4 py-2 text-sm text-gray-200 text-left hover:bg-white/10"
+            >
+                <DocumentDuplicateIcon className="h-5 w-5 mr-3" /> Duplicate
+            </button>
           </motion.div>
         )}
       </div>
 
-      {/* Card Content */}
       <div className="p-5">
         <h3 className="font-bold text-lg text-white truncate">{resume.title}</h3>
         <p className="text-sm text-gray-300 mt-1">Updated {resume.updatedAt}</p>
