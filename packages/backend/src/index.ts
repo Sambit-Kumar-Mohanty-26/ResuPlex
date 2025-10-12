@@ -8,6 +8,7 @@ import { prisma } from './db/index.js';
 import authRoutes from './routes/auth.js';
 import userRoutes from './routes/user.js';
 import resumeRoutes from './routes/resume.js';
+import aiRoutes from './routes/ai.js';
 
 dotenv.config();
 
@@ -85,6 +86,7 @@ app.get('/api/db-test', async (req: Request, res: Response) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/resumes', resumeRoutes);
+app.use('/api/ai', aiRoutes);
 const server = app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
 });

@@ -30,7 +30,9 @@ export interface Skill {
 }
 
 export interface ResumeState {
+  id: string;
   title: string;
+  jobTitle: string;
   contact: ContactInfo;
   summary: string;
   experience: WorkExperience[];

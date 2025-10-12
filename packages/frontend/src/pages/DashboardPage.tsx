@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import useAuthStore from '../store/authStore';
 import ResumeCard from '../components/ResumeCard';
 import type { Resume } from '../components/ResumeCard';
 import { PlusIcon } from '@heroicons/react/24/solid';
 import apiClient from '../api';
 import useResumeStore, { initialResumeState } from '../store/resumeStore';
-import ConfirmationModal from '../components/ConfirmationModal'; 
+import ConfirmationModal from '../components/ConfirmationModal';
+import EmptyState from '../components/EmptyState';
 
 const containerVariants = {
   hidden: { opacity: 1 },
@@ -44,6 +46,7 @@ const DashboardPage = () => {
       setResumes(formattedResumes);
     } catch (error) {
       console.error('Failed to fetch resumes:', error);
+      toast.error('Could not load your resumes.');
     } finally {
       setIsLoading(false);
     }
@@ -61,6 +64,7 @@ const DashboardPage = () => {
       navigate(`/editor/${newResume.id}`);
     } catch (error) {
       console.error('Failed to create new resume:', error);
+      toast.error('Failed to create a new resume.');
     }
   };
 
@@ -71,11 +75,14 @@ const DashboardPage = () => {
 
   const handleConfirmDelete = async () => {
     if (!resumeToDelete) return;
+    const toastId = toast.loading('Deleting resume...');
     try {
       await apiClient.delete(`/resumes/${resumeToDelete}`);
-      fetchResumes(); 
+      toast.success('Resume deleted successfully!', { id: toastId });
+      fetchResumes();
     } catch (error) {
       console.error('Failed to delete resume:', error);
+      toast.error('Failed to delete resume.', { id: toastId });
     } finally {
       setIsModalOpen(false);
       setResumeToDelete(null);
@@ -83,6 +90,7 @@ const DashboardPage = () => {
   };
 
   const handleDuplicate = async (id: string) => {
+    const toastId = toast.loading('Duplicating resume...');
     try {
       const response = await apiClient.get(`/resumes/${id}`);
       const resumeToDuplicate = response.data;
@@ -95,12 +103,13 @@ const DashboardPage = () => {
         title: newTitle,
       });
 
-      fetchResumes(); 
+      toast.success('Resume duplicated!', { id: toastId });
+      fetchResumes();
     } catch (error) {
       console.error('Failed to duplicate resume:', error);
+      toast.error('Failed to duplicate resume.', { id: toastId });
     }
   };
-
 
   return (
     <div>
@@ -111,36 +120,40 @@ const DashboardPage = () => {
         </div>
       </div>
 
-      <motion.div
-        className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        <motion.div
-          variants={itemVariants}
-          onClick={handleCreateNew}
-          className="group cursor-pointer relative flex aspect-[3/4] items-center justify-center rounded-2xl border-2 border-dashed border-white/20 bg-white/5 transition-all duration-300 hover:border-white/40 hover:bg-white/10"
-        >
-          <div className="text-center">
-            <PlusIcon className="mx-auto h-12 w-12 text-white/50 transition-colors group-hover:text-white" />
-            <h3 className="mt-2 text-lg font-bold text-white">Create New Resume</h3>
-          </div>
-        </motion.div>
-
+      <div className="mt-10">
         {isLoading ? (
-          <motion.div variants={itemVariants} className="text-white">Loading resumes...</motion.div>
+          <p className="text-white text-center py-20">Loading your resumes...</p>
+        ) : resumes.length === 0 ? (
+          <EmptyState onActionClick={handleCreateNew} />
         ) : (
-          resumes.map((resume) => (
-            <ResumeCard
-              key={resume.id}
-              resume={resume}
-              onDelete={handleDeleteClick}
-              onDuplicate={handleDuplicate}
-            />
-          ))
+          <motion.div
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            <motion.div
+              variants={itemVariants}
+              onClick={handleCreateNew}
+              className="group cursor-pointer relative flex aspect-[3/4] items-center justify-center rounded-2xl border-2 border-dashed border-white/20 bg-white/5 transition-all duration-300 hover:border-white/40 hover:bg-white/10"
+            >
+              <div className="text-center">
+                <PlusIcon className="mx-auto h-12 w-12 text-white/50 transition-colors group-hover:text-white" />
+                <h3 className="mt-2 text-lg font-bold text-white">Create New Resume</h3>
+              </div>
+            </motion.div>
+
+            {resumes.map((resume) => (
+              <ResumeCard
+                key={resume.id}
+                resume={resume}
+                onDelete={handleDeleteClick}
+                onDuplicate={handleDuplicate}
+              />
+            ))}
+          </motion.div>
         )}
-      </motion.div>
+      </div>
 
       <ConfirmationModal
         isOpen={isModalOpen}

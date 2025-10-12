@@ -30,7 +30,7 @@ const ContactForm = () => {
             name="name"
             id="name"
             className="mt-1 block w-full bg-white/5 border border-white/20 rounded-lg p-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            value={contact.name}
+            value={contact.name || ''} 
             onChange={handleContactChange}
           />
         </div>
@@ -43,7 +43,7 @@ const ContactForm = () => {
             name="email"
             id="email"
             className="mt-1 block w-full bg-white/5 border border-white/20 rounded-lg p-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            value={contact.email}
+            value={contact.email || ''}
             onChange={handleContactChange}
           />
         </div>
@@ -56,7 +56,7 @@ const ContactForm = () => {
             name="phone"
             id="phone"
             className="mt-1 block w-full bg-white/5 border border-white/20 rounded-lg p-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            value={contact.phone}
+            value={contact.phone || ''}
             onChange={handleContactChange}
           />
         </div>
@@ -69,7 +69,7 @@ const ContactForm = () => {
             name="linkedin"
             id="linkedin"
             className="mt-1 block w-full bg-white/5 border border-white/20 rounded-lg p-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            value={contact.linkedin}
+            value={contact.linkedin || ''}
             onChange={handleContactChange}
           />
         </div>
@@ -82,7 +82,7 @@ const ContactForm = () => {
             name="website"
             id="website"
             className="mt-1 block w-full bg-white/5 border border-white/20 rounded-lg p-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            value={contact.website}
+            value={contact.website || ''}
             onChange={handleContactChange}
           />
         </div>

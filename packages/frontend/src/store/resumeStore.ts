@@ -18,7 +18,9 @@ interface ResumeActions {
 }
 
 export const initialResumeState: ResumeState = {
+  id: 'new',
   title: 'Untitled Resume',
+  jobTitle: '',
   contact: {
     name: 'Your Name',
     email: 'youremail@example.com',
