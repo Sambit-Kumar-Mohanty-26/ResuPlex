@@ -88,7 +88,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/resumes', resumeRoutes);
 app.use('/api/ai', aiRoutes);
-const host = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
+const host = '0.0.0.0';
 
 const server = app.listen(port, host, () => {
   console.log(`[server]: Server is running at http://${host}:${port}`);
