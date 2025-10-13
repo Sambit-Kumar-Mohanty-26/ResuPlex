@@ -13,7 +13,7 @@ import aiRoutes from './routes/ai.js';
 dotenv.config();
 
 const app: Express = express();
-const port = process.env.PORT || 8001;
+const port = parseInt(process.env.PORT || '8001', 10);
 
 console.log("===================================");
 console.log("SERVER STARTING UP...");
@@ -88,8 +88,10 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/resumes', resumeRoutes);
 app.use('/api/ai', aiRoutes);
-const server = app.listen(port, () => {
-  console.log(`[server]: Server is running at http://localhost:${port}`);
+const host = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
+
+const server = app.listen(port, host, () => {
+  console.log(`[server]: Server is running at http://${host}:${port}`);
 });
 
 const gracefulShutdown = async (signal: string) => {
