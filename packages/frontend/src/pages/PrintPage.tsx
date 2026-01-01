@@ -6,39 +6,44 @@ import ModernTemplate from '../components/editor/templates/ModernTemplate';
 
 const PrintPage = () => {
   const { resumeId } = useParams<{ resumeId: string }>();
-  const [searchParams] = useSearchParams(); 
+  const [searchParams] = useSearchParams();
   const [resumeData, setResumeData] = useState<ResumeState | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (resumeId) {
       const fetchResumeData = async () => {
         try {
-          const token = searchParams.get('token'); 
-          if (!token) {
-            throw new Error("Auth token not provided for printing.");
-          }
+          const token = searchParams.get('token');
+          if (!token) throw new Error("No authentication token provided.");
+
           const response = await apiClient.get(`/resumes/${resumeId}`, {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
+            headers: { Authorization: `Bearer ${token}` }
           });
           
           setResumeData(response.data);
-          document.body.setAttribute('data-puppeteer-ready', 'true');
-        } catch (error) {
-          console.error('Failed to fetch resume data for printing:', error);
-          document.body.setAttribute('data-puppeteer-error', 'true'); 
+          
+          setTimeout(() => {
+            window.print();
+          }, 800); 
+
+        } catch (err) {
+          console.error('Print fetch error:', err);
+          setError('Failed to load resume.');
         }
       };
       fetchResumeData();
     }
   }, [resumeId, searchParams]);
 
-  if (!resumeData) {
-    return <div>Loading document...</div>;
-  }
+  if (error) return <div className="p-10 text-red-500">{error}</div>;
+  if (!resumeData) return <div className="p-10">Preparing document...</div>;
 
-  return <ModernTemplate data={resumeData} />;
+  return (
+    <div className="bg-white min-h-screen w-full print:min-h-0">
+      <ModernTemplate data={resumeData} />
+    </div>
+  );
 };
 
 export default PrintPage;

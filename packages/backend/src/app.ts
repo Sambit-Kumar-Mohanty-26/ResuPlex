@@ -7,21 +7,25 @@ import authRoutes from './routes/auth.js';
 import userRoutes from './routes/user.js';
 import resumeRoutes from './routes/resume.js';
 import aiRoutes from './routes/ai.js';
-
+import { aiRateLimiter } from './middleware/rateLimiter.js'; 
 dotenv.config();
 
 const app: Express = express();
 
 const allowedOrigins = [
   'http://localhost:5173',
+  'http://localhost:5174',
+  'http://127.0.0.1:5173',
+  'http://127.0.0.1:5174',
   'https://resu-plex.vercel.app'
 ];
 
 const corsOptions: cors.CorsOptions = {
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+    if (!origin || allowedOrigins.some(allowed => origin.startsWith(allowed))) {
       callback(null, true);
     } else {
+      console.error(`CORS ERROR: Origin ${origin} not allowed.`);
       callback(new Error('Not allowed by CORS'));
     }
   },
@@ -40,6 +44,6 @@ app.get('/api/health', (req: Request, res: Response) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/resumes', resumeRoutes);
-app.use('/api/ai', aiRoutes);
+app.use('/api/ai', aiRateLimiter, aiRoutes);
 
 export default app;

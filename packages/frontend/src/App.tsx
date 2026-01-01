@@ -1,19 +1,19 @@
 import { Routes, Route } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import EditorPage from './pages/EditorPage';
+import PrintPage from './pages/PrintPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import MainLayout from './layouts/MainLayout';
-import DashboardLayout from './layouts/DashboardLayout'; 
-import PrintPage from './pages/PrintPage'; 
+import DashboardLayout from './layouts/DashboardLayout';
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   return (
     <>
-     <Toaster 
+      <Toaster 
         position="top-center"
         reverseOrder={false}
         toastOptions={{
@@ -29,7 +29,6 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-
           <Route path="/features" element={<HomePage />} />
           <Route path="/how-it-works" element={<HomePage />} />
           <Route path="/success-stories" element={<HomePage />} />

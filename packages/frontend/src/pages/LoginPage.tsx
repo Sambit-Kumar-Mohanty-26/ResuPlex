@@ -5,11 +5,13 @@ import useAuthStore from '../store/authStore';
 import { motion } from 'framer-motion';
 import Tilt from 'react-parallax-tilt';
 import Logo from '../components/Logo';
+import { ArrowPathIcon } from '@heroicons/react/24/solid';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false); 
   
   const navigate = useNavigate();
   const loginAction = useAuthStore((state) => state.login);
@@ -17,6 +19,7 @@ const LoginPage = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
+    setIsLoading(true);
 
     try {
       const response = await apiClient.post('/auth/login', { email, password });
@@ -28,8 +31,10 @@ const LoginPage = () => {
       if (err.response?.data?.error) {
         setError(err.response.data.error);
       } else {
-        setError('An unexpected error occurred. Please try again.');
+        setError('Server is waking up or an error occurred. Please try again.');
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -154,12 +159,23 @@ const LoginPage = () => {
             <motion.div variants={itemVariants}>
               <button
                 type="submit"
-                className="group relative w-full inline-flex items-center justify-center px-4 py-3 text-white font-semibold bg-indigo-600 rounded-lg overflow-hidden"
+                disabled={isLoading}
+                className="group relative w-full inline-flex items-center justify-center px-4 py-3 text-white font-semibold bg-indigo-600 rounded-lg overflow-hidden disabled:opacity-70 disabled:cursor-wait"
               >
                 <span className="absolute h-full w-full bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-600"></span>
                 <span className="absolute top-0 left-0 w-full h-full bg-black opacity-20 group-hover:opacity-0 transition-opacity"></span>
                 <span className="absolute top-0 left-0 w-1/4 h-full bg-white opacity-30 transform -skew-x-12 -translate-x-full group-hover:translate-x-[500%] transition-transform duration-700"></span>
-                <span className="relative z-10">Sign In</span>
+                
+                <span className="relative z-10 flex items-center">
+                  {isLoading ? (
+                    <>
+                      <ArrowPathIcon className="h-5 w-5 animate-spin mr-2" />
+                      Waking up server...
+                    </>
+                  ) : (
+                    'Sign In'
+                  )}
+                </span>
               </button>
             </motion.div>
           </form>

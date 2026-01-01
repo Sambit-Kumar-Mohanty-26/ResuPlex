@@ -41,7 +41,7 @@ const DashboardPage = () => {
         id: r.id,
         title: r.title,
         updatedAt: new Date(r.updatedAt).toLocaleDateString(),
-        thumbnail: `/images/templates/template-${(parseInt(r.id.slice(-1), 16) % 3) + 1}.png`,
+        thumbnail: null,
       }));
       setResumes(formattedResumes);
     } catch (error) {

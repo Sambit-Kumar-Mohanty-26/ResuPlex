@@ -1,15 +1,15 @@
 {
-  "name": "resuplex",
+  "name": "resuplex-monorepo",
   "version": "1.0.0",
+  "private": true,
   "description": "AI-Powered Resume Builder to help users craft the perfect resume.",
   "main": "index.js",
-"scripts": {
-    "start": "docker-compose up -d && wait-on tcp:5432 && npm run db:migrate && concurrently \"npm:frontend\" \"npm:backend\"",
-    "frontend": "cd packages/frontend && npm run dev",
-    "backend": "cd packages/backend && npx tsx watch src/index.ts",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
     "db:start": "docker-compose up -d",
-    "db:migrate": "cd packages/backend && npm run prisma -- migrate dev --name init",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "db:stop": "docker-compose down"
   },
   "repository": {
     "type": "git",
@@ -17,7 +17,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/Sambit-Kumar-Mohanty-26/ResuPlex/issues"
   },

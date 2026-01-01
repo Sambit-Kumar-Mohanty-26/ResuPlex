@@ -1,38 +1,32 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import useResumeStore from '../../store/resumeStore';
 import ModernTemplate from './templates/ModernTemplate';
 import { ArrowDownTrayIcon, ArrowPathIcon } from '@heroicons/react/24/solid';
-import apiClient from '../../api'; 
+// @ts-ignore
+import html2pdf from 'html2pdf.js';
 
 const ResumePreview = () => {
   const resumeState = useResumeStore();
-  const resumeId = useResumeStore((state) => (state as any).id);
   const [isDownloading, setIsDownloading] = useState(false);
+  const printRef = useRef<HTMLDivElement>(null);
   const handleDownload = async () => {
-    if (!resumeId) {
-      console.error("Resume ID is not available for download.");
-      return;
-    }
-    
+    const element = printRef.current;
+    if (!element) return;
+
     setIsDownloading(true);
 
+    const opt = {
+      margin:       0,
+      filename:     `${resumeState.title || 'resume'}.pdf`,
+      image:        { type: 'jpeg' as const, quality: 0.98 },
+      html2canvas:  { scale: 2, useCORS: true },
+      jsPDF:        { unit: 'in' as const, format: 'letter' as const, orientation: 'portrait' as const }
+    };
+
     try {
-      const response = await apiClient.get(`/resumes/${resumeId}/pdf`, {
-        responseType: 'blob', 
-      });
-
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      const filename = `${resumeState.title || 'resume'}.pdf`;
-      link.setAttribute('download', filename);
-      document.body.appendChild(link);
-      link.click();
-      link.parentNode?.removeChild(link);
-      window.URL.revokeObjectURL(url);
-
+      await html2pdf().set(opt).from(element).save();
     } catch (error) {
-      console.error('Failed to download PDF:', error);
+      console.error("PDF generation failed", error);
     } finally {
       setIsDownloading(false);
     }
@@ -45,7 +39,7 @@ const ResumePreview = () => {
         <button 
           onClick={handleDownload}
           disabled={isDownloading}
-          className="flex items-center justify-center w-36 px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-lg 
+          className="flex items-center justify-center w-40 px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-lg 
                      hover:bg-indigo-700 disabled:bg-indigo-400 disabled:cursor-not-allowed transition-colors"
         >
           {isDownloading ? (
@@ -62,7 +56,9 @@ const ResumePreview = () => {
         </button>
       </div>
       <div className="bg-white h-full overflow-y-auto rounded-b-2xl">
-        <ModernTemplate data={resumeState} />
+        <div ref={printRef} className="w-full h-full">
+           <ModernTemplate data={resumeState} />
+        </div>
       </div>
     </div>
   );
